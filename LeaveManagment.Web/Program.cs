@@ -1,4 +1,4 @@
-using AutoMapper;
+using LeaveManagment.Web.Configurations;
 using LeaveManagment.Web.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +15,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddAutoMapper(typeof(MapperConfiguration).Assembly);
+builder.Services.AddAutoMapper(typeof(MapperConfig).Assembly);
 
 
 

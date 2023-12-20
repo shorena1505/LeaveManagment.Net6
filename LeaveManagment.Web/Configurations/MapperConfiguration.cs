@@ -5,9 +5,9 @@ using Microsoft.Build.Framework.Profiler;
 
 namespace LeaveManagment.Web.Configurations
 {
-    public class MapperConfiguration : Profile
+    public class MapperConfig : Profile
     {
-       public MapperConfiguration()
+       public MapperConfig()
         {
             CreateMap<LeaveType, LeaveTypeVM>().ReverseMap();
         }

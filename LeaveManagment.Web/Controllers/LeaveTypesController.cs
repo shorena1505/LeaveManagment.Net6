@@ -38,14 +38,14 @@ namespace LeaveManagment.Web.Controllers
                 return NotFound();
             }
 
-            var leaveType = await _context.LeaveTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var leaveType = await _context.LeaveTypes.FindAsync(id);
             if (leaveType == null)
             {
                 return NotFound();
             }
+            var leaveTypeVM = mapper.Map<LeaveTypeVM>(leaveType);
 
-            return View(leaveType);
+            return View(leaveTypeVM);
         }
 
         // GET: LeaveTypes/Create
@@ -84,17 +84,18 @@ namespace LeaveManagment.Web.Controllers
             {
                 return NotFound();
             }
-            return View(leaveType);
+            var leaveTypeVM = mapper.Map<LeaveTypeVM>(leaveType);
+           
+            return View(leaveTypeVM);
         }
-
         // POST: LeaveTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,DefaultDays,Id,DateCreated,DateModified")] LeaveType leaveType)
+        public async Task<IActionResult> Edit(int id, LeaveTypeVM leaveTypeVM)
         {
-            if (id != leaveType.Id)
+            if (id != leaveTypeVM.Id)
             {
                 return NotFound();
             }
@@ -103,12 +104,13 @@ namespace LeaveManagment.Web.Controllers
             {
                 try
                 {
+                    var leaveType = mapper.Map<LeaveType>(leaveTypeVM);
                     _context.Update(leaveType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LeaveTypeExists(leaveType.Id))
+                    if (!LeaveTypeExists(leaveTypeVM.Id))
                     {
                         return NotFound();
                     }
@@ -119,7 +121,7 @@ namespace LeaveManagment.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(leaveType);
+            return View(leaveTypeVM);
         }
 
         // GET: LeaveTypes/Delete/5
