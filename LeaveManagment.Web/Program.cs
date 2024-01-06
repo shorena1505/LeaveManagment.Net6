@@ -1,7 +1,9 @@
 using LeaveManagment.Web.Configurations;
 using LeaveManagment.Web.Data;
+using LeaveManagment.Web.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +15,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<Employee>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>() // Use IdentityRole here
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 builder.Services.AddAutoMapper(typeof(MapperConfig).Assembly);
-
-
-
-
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

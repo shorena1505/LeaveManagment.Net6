@@ -8,9 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagment.Web.Data;
 using AutoMapper;
 using LeaveManagment.Web.Models;
+using Microsoft.AspNetCore.Authorization;
+using LeaveManagment.Web.Constans;
 
 namespace LeaveManagment.Web.Controllers
 {
+    // [Authorize(Roles = Roles.Administrator)]
+
     public class LeaveTypesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,7 +33,6 @@ namespace LeaveManagment.Web.Controllers
               return View(leaveTypes);
                           
         }
-
         // GET: LeaveTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -48,6 +51,7 @@ namespace LeaveManagment.Web.Controllers
             return View(leaveTypeVM);
         }
 
+        
         // GET: LeaveTypes/Create
         public IActionResult Create()
         {
@@ -70,7 +74,7 @@ namespace LeaveManagment.Web.Controllers
             }
             return View(leaveTypeVM);
         }
-
+     
         // GET: LeaveTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -123,6 +127,7 @@ namespace LeaveManagment.Web.Controllers
             }
             return View(leaveTypeVM);
         }
+    
 
         // GET: LeaveTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
