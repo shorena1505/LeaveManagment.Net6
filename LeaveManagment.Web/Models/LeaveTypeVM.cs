@@ -7,7 +7,7 @@ namespace LeaveManagment.Web.Models
         public int Id { get; set; }
         [Display(Name = "LeaveType Name")]
         [Required]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Default Numbers Of Days")]
         [Range(1, 30, ErrorMessage = "Number of days must be between 1 and 30.")]

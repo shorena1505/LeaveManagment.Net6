@@ -13,7 +13,7 @@ using LeaveManagment.Web.Constans;
 
 namespace LeaveManagment.Web.Controllers
 {
-    // [Authorize(Roles = Roles.Administrator)]
+    [Authorize(Roles = Roles.Administrator)]
 
     public class LeaveTypesController : Controller
     {
@@ -30,8 +30,8 @@ namespace LeaveManagment.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var leaveTypes = mapper.Map<List<LeaveTypeVM>>(await _context.LeaveTypes.ToListAsync());
-              return View(leaveTypes);
-                          
+            return View(leaveTypes);
+
         }
         // GET: LeaveTypes/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -51,7 +51,7 @@ namespace LeaveManagment.Web.Controllers
             return View(leaveTypeVM);
         }
 
-        
+
         // GET: LeaveTypes/Create
         public IActionResult Create()
         {
@@ -74,7 +74,7 @@ namespace LeaveManagment.Web.Controllers
             }
             return View(leaveTypeVM);
         }
-     
+
         // GET: LeaveTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -89,7 +89,7 @@ namespace LeaveManagment.Web.Controllers
                 return NotFound();
             }
             var leaveTypeVM = mapper.Map<LeaveTypeVM>(leaveType);
-           
+
             return View(leaveTypeVM);
         }
         // POST: LeaveTypes/Edit/5
@@ -127,7 +127,7 @@ namespace LeaveManagment.Web.Controllers
             }
             return View(leaveTypeVM);
         }
-    
+
 
         // GET: LeaveTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -161,14 +161,47 @@ namespace LeaveManagment.Web.Controllers
             {
                 _context.LeaveTypes.Remove(leaveType);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool LeaveTypeExists(int id)
         {
-          return (_context.LeaveTypes?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.LeaveTypes?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        // POST: LeaveTypes/allocation
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AllocateLeave(int leaveTypeId)
+        {
+            var dbLeaveType = await _context.LeaveTypes.FindAsync(leaveTypeId);
+            if (dbLeaveType == null)
+            {
+                return NotFound();
+            }
+
+            var usersIds = _context.UserRoles.Where(ur => ur.RoleId == "32cb1c44-74ac-4433-9c54-c5e6cbc75463").Select(u => u.UserId).ToList();
+
+            foreach (var userId in usersIds)
+            {
+                if (!await _context.LeaveAllocations.AnyAsync(l => l.LeaveTypeId == leaveTypeId && l.EmployeeId == userId))
+                {
+                    _context.LeaveAllocations.Add(new LeaveAllocation
+                    {
+                        DateCreated = DateTime.Now,
+                        EmployeeId = userId,
+                        LeaveTypeId = leaveTypeId,
+                        NumberOfDays = dbLeaveType.DefaultDays
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            // You might want to redirect to a different action or view after allocation
+            return RedirectToAction("Index", "Employees"); // Adjust the action and controller as needed
         }
     }
 }
+

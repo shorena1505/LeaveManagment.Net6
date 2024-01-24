@@ -26,6 +26,7 @@
         @foreach (var item in Model)
         {
             <tr>
+               
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
@@ -34,6 +35,7 @@
                 </td>
 
                 <td>
+                    <button data-id="@item.Id" class="btn btn-primary AllocateBtn" type="button">Allocate Leave</button>
                     <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-to-square"></i></a>
                     <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info"></i></a>
                     <button data-id="@item.Id" class="btn btn-danger DeleteBtn" type="button"><i class="fa-regular fa-trash-can"></i></button>
@@ -42,6 +44,9 @@
         }
     </tbody>
 </table>
+<form id="allocateForm" asp-action="AllocateLeave">
+    <input type="hidden" id="leaveTypeIdAllocation" name="leaveTypeId" />
+</form>
 <form id="deleteForm" asp-action="Delete">
     <input type="hidden" id="leaveTypeId" name="Id" />
 </form>
@@ -51,6 +56,7 @@
     <script>
         $(function () {
             new DataTable('.table');
+           
             $('.DeleteBtn').click(function (e) {
                 Swal.fire({
                     title: "Are you sure?",
@@ -66,6 +72,27 @@
                         var id = btn.data("id");
                         $("#leaveTypeId").val(id);
                         $("#deleteForm").submit();
+                    }
+                });
+            });
+
+            $('.AllocateBtn').click(function (e) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Are you sure you want to allocate this leave to all employees?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, allocate it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var btn = $(this);
+                        console.log(btn);
+                        var id = btn.data("id");
+                        console.log(id);
+                        $("#leaveTypeIdAllocation").val(id);
+                        $("#allocateForm").submit();
                     }
                 });
             });
