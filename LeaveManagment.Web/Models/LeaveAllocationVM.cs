@@ -11,7 +11,7 @@ namespace LeaveManagment.Web.Models
         [Range(1, 30, ErrorMessage ="Invalid Number Entered")]
         public int NumberOfDays { get; set; }
         [Required]
-        public int Period {  get; set; }    
-        public LeaveTypeVM LeaveType { get; set; }
+        public int Period {  get; set; }        
+        public LeaveTypeVM? LeaveType { get; set; }
     }
 }

@@ -42,23 +42,42 @@
             <h4>Leave Allocations</h4>
         </div>
         <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">Leave Name</div>
+                    <div class="col">Original Allocation</div>
+                    <div class="col">Current Days</div> <!-- Corrected typo here -->
+                    <div class="col">Action</div>
+                </div>
+            </li>
             @foreach (var allocation in Model.LeaveAllocations)
             {
                 <li class="list-group-item">
-                    <h6>@(allocation.LeaveType?.Name ?? "Unknown Leave Type")</h6>
-                    <button type="button" class="btn btn-primary">
-                        Allocated Days <span class="badge rounded-pill text-bg-primary">@allocation.LeaveType?.DefaultDays</span>
-                    </button>
-                    <button type="button" class="btn btn-primary">
-                        Remaining Days <span class="badge rounded-pill text-bg-primary">@allocation.NumberOfDays</span>
-                    </button>
-                  <a asp-action="EditAllocation" asp-route-id="@allocation.Id" class="btn btn-warning">Edit Allocation</a>
-                 </li>
-                }
+                    <div class="row">
+                        <div class="col">
+                            <h6>@allocation.LeaveType?.Name</h6>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-primary">
+                                Allocated Days <span class="badge rounded-pill text-bg-primary">@allocation.Period</span>
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-primary">
+                                Remaining Days <span class="badge rounded-pill text-bg-primary">@allocation.NumberOfDays</span>
+                            </button>
+                        </div>
+                        <div class="col">
+                            <a asp-action="EditAllocation" asp-route-id="@allocation.Id" class="btn btn-warning">Edit Allocation</a>
+                        </div>
+                    </div>
+                </li>
+            }
         </ul>
+
     </div>
 </div>
 <div>
    
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-dark" >Back to List</a>
 </div>

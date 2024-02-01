@@ -6,15 +6,14 @@
 
 <h1>Edit @Model.LeaveType?.Name Allocation</h1>
 
-
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditAllocation" method="post">
+        <form asp-action="EditAllocation" method="post" >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="EmployeeId" />
-           <div class="form-group">
+            <div class="form-group">
                 <label asp-for="NumberOfDays" class="control-label"></label>
                 <input asp-for="NumberOfDays" class="form-control" />
                 <span asp-validation-for="NumberOfDays" class="text-danger"></span>
@@ -25,21 +24,21 @@
                 <span asp-validation-for="Period" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" onclick="showAlertAndRedirect()" />
-               
+                <input type="submit" value="Save" class="btn btn-primary" />
+
                 <script>
                     function showAlertAndRedirect() {
-                    alert("Submitted!");
-                    window.location.href = '/Employees/ViewAllocation';
-                       
+                        alert("Submitted!");
+                        window.history.back();
+                        return false; // prevent the form from submitting
                     }
                 </script>
+
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-dark">Back to List</a>
 </div>
-

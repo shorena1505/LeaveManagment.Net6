@@ -6,8 +6,8 @@ namespace LeaveManagment.Web.Models
     {
         public string EmployeeId { get; set; }
        
-        public List<LeaveAllocationVM> LeaveAllocations { get; set; }
+        public List<LeaveAllocationVM>? LeaveAllocations { get; set; }
 
-        public EmployeeListVM Employee { get; internal set; }
+        public EmployeeListVM? Employee { get; internal set; }
     }
 }
