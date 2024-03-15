@@ -18,7 +18,7 @@ namespace LeaveManagment.Web.Data.Migrations
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LeaveTypeId = table.Column<int>(type: "int", nullable: false),
-                    DataRequested = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateRequested = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RequestComments = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Approved = table.Column<bool>(type: "bit", nullable: true),
                     Cancelled = table.Column<bool>(type: "bit", nullable: false),

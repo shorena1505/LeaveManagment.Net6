@@ -4,7 +4,7 @@ namespace LeaveManagment.Web.Models
 {
     public class LeaveAllocationEditVM: LeaveAllocationVM
     {
-        public string EmployeeId { get; set; }
+        public string? EmployeeId { get; set; }
        
         public List<LeaveAllocationVM>? LeaveAllocations { get; set; }
 

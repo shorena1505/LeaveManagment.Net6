@@ -5,13 +5,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LeaveManagment.Web</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="~/lib/font-awesome/css/fontawesome.css" />
-    <link rel="stylesheet" href="~/LeaveManagment.Web.styles.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/LeaveManagment.Web.styles.css" asp-append-version="true" /> *@
 </head>
 <body>
     <header>
@@ -28,10 +28,10 @@
                             <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="">Apply For Leave</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="LeaveRequests" asp-action="Create">Apply For Leave</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="">My Leave</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="LeaveRequests" asp-action="MyLeave">My Leave</a>
                         </li>
                         @if (User.IsInRole(Roles.Administrator))
                         {
@@ -39,14 +39,12 @@
                                 <a class="nav-link text-light" asp-area="" asp-controller="Employees" asp-action="Index">Employees</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                     Leave Managment
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <li><a class="dropdown-item" asp-controller="LeaveTypes" asp-action="Index">Leave Types</a></li>
-                                    <li><a class="dropdown-item" href="#">Leave Allocation</a></li>
-                                    <li><a class="dropdown-item" href="#">Leave Request</a></li>
-                                    <li><a class="dropdown-item" href="#">Employee Menegment</a></li>
+                                    <li><a class="dropdown-item" asp-controller="LeaveRequests" asp-action="Index">Leave Request</a></li>
                                 </ul>
                             </li>
                         }
@@ -67,23 +65,20 @@
             &copy; @DateTime.Now.Year - Leave Managment Web - Net 6 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/sweetalert.sweetalert.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-
-
-    <!-- Include Bootstrap and Bootstrap Datepicker JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script>
         $(function () {
-           $( ".datepicker" ).datepicker();
+            $(".datepicker").datepicker({ format: 'yyyy-mm-dd', });
         });
+
     </script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
