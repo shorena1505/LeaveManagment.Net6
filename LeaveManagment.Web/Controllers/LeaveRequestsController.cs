@@ -22,15 +22,19 @@ namespace LeaveManagment.Web.Controllers
         private readonly IMapper mapper;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<Employee> userManager;
+        private readonly ILogger<LeaveRequestsController> logger;
+        private EventId ex;
 
         public LeaveRequestsController(ApplicationDbContext context, IMapper mapper,
-            IHttpContextAccessor httpContextAccessor, UserManager<Employee> userManager)
+            IHttpContextAccessor httpContextAccessor, UserManager<Employee> userManager, ILogger<LeaveRequestsController> logger)
         {
             _context = context;
             this.mapper = mapper;
             this.httpContextAccessor = httpContextAccessor;
             this.userManager = userManager;
+            this.logger = logger;
         }
+
         [Authorize(Roles=Roles.Administrator)]
         // GET: LeaveRequests
         public async Task<IActionResult> Index()
@@ -42,6 +46,7 @@ namespace LeaveManagment.Web.Controllers
                 ApprovedRequests = leaveRequests.Count(q => q.Approved == true),
                 PendingRequests = leaveRequests.Count(q => q.Approved == null),
                 RejectedRequests = leaveRequests.Count(q => q.Approved == false),
+                CancelRequests = leaveRequests.Count(q => q.Cancelled == true),
                 LeaveRequests = mapper.Map<List<LeaveRequestVM>>(leaveRequests)
             };
             return View(model);
@@ -90,6 +95,7 @@ namespace LeaveManagment.Web.Controllers
                 ApprovedRequests = leaveRequests.Count(q => q.Approved == true),
                 PendingRequests = leaveRequests.Count(q => q.Approved == null),
                 RejectedRequests = leaveRequests.Count(q => q.Approved == false),
+                CancelRequests = leaveRequests.Count(q => q.Cancelled == true),
                 LeaveRequests = mapper.Map<List<LeaveRequestVM>>(leaveRequests)
             };
 
@@ -97,7 +103,7 @@ namespace LeaveManagment.Web.Controllers
             return View(model);
         }
 
-        // GET: LeaveRequests/Details/5
+        // GET: LeaveRequestsApprove/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.LeaveRequests == null)
@@ -133,19 +139,57 @@ namespace LeaveManagment.Web.Controllers
                 }
                 // Update the approval status of the leave request
                 leaveRequests.Approved = approved;
+                leaveRequests.Cancelled = false;
+                
 
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
                 // Redirect to the index action after successful approval
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyLeave));
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return RedirectToAction(nameof(Index));
+                logger.LogError(ex, "Error Approving Request");
+                throw;
             }
-          
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Cancel(int id)
+        {
+            // Retrieve the leave request from the database asynchronously
+            var leaveRequest = _context.LeaveRequests.FirstOrDefaultAsync(lr => lr.Id == id).Result;
+
+            if (leaveRequest == null)
+            {
+                // If leave request not found, return NotFound result
+                return NotFound();
+            }
+
+            // Mark the leave request as canceled
+            leaveRequest.Cancelled = true;
+            leaveRequest.Approved = false;
+
+            try
+            {
+                // Update the leave request in the database synchronously
+                _context.LeaveRequests.Update(leaveRequest);
+                _context.SaveChangesAsync();
+
+                // Redirect to the appropriate action or page
+                return RedirectToAction(nameof(MyLeave));
+            }
+            catch (Exception ex)
+            {
+                // Log any errors that occur during cancellation
+                logger.LogError(ex, "Error occurred while canceling leave request with ID {LeaveRequestId}", id);
+
+                // Redirect to an error page or display an error message
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         // GET: LeaveRequests/Create
@@ -155,7 +199,7 @@ namespace LeaveManagment.Web.Controllers
             {
                 LeaveTypes = new SelectList(_context.LeaveTypes, "Id", "Name")
             };
-          return View(model);
+           return View(model);
         }
 
         // POST: LeaveRequests/Create
@@ -181,12 +225,11 @@ namespace LeaveManagment.Web.Controllers
                     await _context.SaveChangesAsync();
 
                     // Redirect to the index action after successful creation
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(MyLeave));
                 }
                 catch (Exception)
                 {
-                    // Handle any exceptions that occur during saving
-                    // Log the exception or display an error message
+                    logger.LogError(ex, "Error Cancelling Leave request");
                     ModelState.AddModelError("", "An error occurred while processing your request.");
                     return View(model);
                 }
@@ -242,7 +285,7 @@ namespace LeaveManagment.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyLeave));
             }
             ViewData["LeaveTypeId"] = new SelectList(_context.LeaveTypes, "Id", "Id", leaveRequest.LeaveTypeId);
             return View(leaveRequest);
@@ -283,7 +326,7 @@ namespace LeaveManagment.Web.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyLeave));
         }
 
         private bool LeaveRequestExists(int id)

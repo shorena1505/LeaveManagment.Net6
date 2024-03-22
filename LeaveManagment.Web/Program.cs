@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Serilog;
+using ZstdSharp.Unsafe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +29,15 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 builder.Services.AddAutoMapper(typeof(MapperConfig).Assembly);
+
+builder.Host.UseSerilog((ctx, lc) =>
+lc.WriteTo.Console()
+.ReadFrom.Configuration(ctx.Configuration));
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -13,5 +13,6 @@ namespace LeaveManagment.Web.Models
         [Display(Name ="Rejected Requests")]
         public int RejectedRequests { get; set; }
         public List <LeaveRequestVM> LeaveRequests { get; set; }
+        public int CancelRequests { get; internal set; }
     }
 }
